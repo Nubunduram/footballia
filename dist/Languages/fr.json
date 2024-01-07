@@ -1,0 +1,17 @@
+{ 
+    "li-eng": "Anglais",
+    "li-fr": "Français",
+    "h1": "Bienvenue à Footballia",
+    "h2": "Enregistrer votre compte",
+    "name-label": "Nom",
+    "email-label": "Email",
+    "password-label": "Mot de passe",
+    "agree": "J'accepte les",
+    "terms": "Conditions",
+    "and": " et ",
+    "policy": "la Politique de Confidentialité",
+    "sign-in-button": "Se Connecter",
+    "sign-up-button": "S'Inscrire",
+    "or-text": "ou",
+    "google-button": "Se connecter avec Google"
+}
