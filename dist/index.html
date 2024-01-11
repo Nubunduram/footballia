@@ -13,88 +13,102 @@
 </head>
 
 <body>
-    <div class="container">
-        <img id="main-picture" src="/Assets/footballia.png" alt="Football Picture">
-
-        <section>
-            <div id="pop-up">
-                Email: test@test.com<br> password: test123
-            </div>
-            <!-- Language Menu -->
-            <header id="language-menu">
-                <div id="current-language-container">
-                    <div id="current-language">English</div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 15L7 10H17L12 15Z" fill="#9F9F9F" />
-                    </svg>
-                </div>
-                <ul id="language-list">
-                    <li id="li-eng" data-lang="English" onclick="setLanguage('en')">English</li>
-                    <li id="li-fr" data-lang="Français" onclick="setLanguage('fr')">French</li>
-                </ul>
-            </header>
-
-            <!-- Registration Form -->
-            <form class="form">
-                <h1 id="h1">Welcome to Footballia</h1>
-                <h2 id="h2">Register your Account</h2>
-
-                <!-- Name Input -->
-                <div id="name-label-input" class="label-input">
-                    <label id="name-label" for="name">Name</label>
-                    <input id="name" placeholder="Franck" autofocus required>
-                </div>
-
-                <!-- Email Input -->
-                <div class="label-input">
-                    <label id="email-label" for="email">Email</label>
-                    <input id="email" type="email" placeholder="F.Lampard@gmail.com" required>
-                </div>
-
-                <!-- Password Input -->
-                <div class="label-input">
-                    <label id="password-label" for="password">Password</label>
-                    <input id="password" minlength="6" type="password" placeholder="Chelsea2012!" required>
-                </div>
-
-                <!-- Terms and Privacy Policy Checkbox -->
-                <div id="checkbox-container" class="checkbox-container">
-                    <input id="checkbox" type="checkbox" required aria-label="Agree to Terms and Privacy Policy">
-                    <p>
-                        <span id="agree">I agree to the </span>
-                        <a id="terms" href=" ">Terms</a>
-                        <span id="and"> and </span>
-                        <a id="policy" href=" ">Privacy Policy</a>
-                    </p>
-                </div>
-
-                <!-- Sign In and Sign Up Buttons -->
-                <div class="button-container">
-                    <input class="button" type="button" id="sign-up-button" value="" aria-label="Sign Up">
-                    <input class="button" type="button" id="sign-in-button" value="" aria-label="Sign In">
-                </div>
-
-                <!-- Divider -->
-                <div class="hr-container">
-                    <hr>
-                    <span class="hr-middle" id="or-text">or</span>
-                    <hr>
-                </div>
-
-                <!-- Google Sign In Button -->
-                <button type="button" class="google-button">
-                    <img class="logo-google" src="/Assets/logoGoogle.png">
-                    <span id="google-button">Sign in with Google</span>
-                </button>
-            </form>
-
-            <!-- Footer -->
-            <footer>
-                © <time datetime="1984">1984</time> - <span id="current-year">current-year</span> FOOTBALLIA
-            </footer>
-        </section>
+    <div id="loading-screen">
+        <div id="ball"></div>
+        Loading
     </div>
-    <script src="bundle.js"></script>
+    <div class="connexion-page">
+        <div class="container">
+            <img id="main-picture" src="/Assets/footballia.png" alt="Football Picture">
+
+            <section>
+                <div id="pop-up">
+                    Email: test@test.com<br> password: test123
+                </div>
+                <!-- Language Menu -->
+                <header id="language-menu">
+                    <div id="current-language-container">
+                        <div id="current-language">English</div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 15L7 10H17L12 15Z" fill="#9F9F9F" />
+                        </svg>
+                    </div>
+                    <ul id="language-list">
+                        <li id="li-eng" data-lang="English" onclick="setLanguage('en')">English</li>
+                        <li id="li-fr" data-lang="Français" onclick="setLanguage('fr')">French</li>
+                    </ul>
+                </header>
+
+                <!-- Registration Form -->
+                <form class="form">
+                    <h1 id="h1">Welcome to Footballia</h1>
+                    <h2 id="h2">Register your Account</h2>
+
+                    <!-- Name Input -->
+                    <div id="name-label-input" class="label-input">
+                        <label id="name-label" for="name">Name</label>
+                        <input id="name" placeholder="Franck" autocomplete="given-name" minlength="3" autofocus
+                            required>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="label-input">
+                        <label id="email-label" for="email">Email</label>
+                        <input id="email" type="email" placeholder="F.Lampard@gmail.com" autocomplete="email" required>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="label-input">
+                        <label id="password-label" for="password">Password</label>
+                        <input id="password" minlength="6" type="password" placeholder="Chelsea2012!"
+                            autocomplete="current-password" required>
+                    </div>
+
+                    <!-- Terms and Privacy Policy Checkbox -->
+                    <div id="checkbox-container" class="checkbox-container">
+                        <input id="checkbox" type="checkbox" required aria-label="Agree to Terms and Privacy Policy">
+                        <p>
+                            <span id="agree">I agree to the </span>
+                            <a id="terms" href=" ">Terms</a>
+                            <span id="and"> and </span>
+                            <a id="policy" href=" ">Privacy Policy</a>
+                        </p>
+                    </div>
+
+                    <!-- Sign In and Sign Up Buttons -->
+                    <div class="button-container">
+                        <input class="button" type="button" id="sign-up-button" value="" aria-label="Sign Up">
+                        <input class="button" type="button" id="sign-in-button" value="" aria-label="Sign In">
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="hr-container">
+                        <hr>
+                        <span class="hr-middle" id="or-text">or</span>
+                        <hr>
+                    </div>
+
+                    <!-- Google Sign In Button -->
+                    <button type="button" id="google-login" class="google-button">
+                        <img class="logo-google" src="/Assets/logoGoogle.png">
+                        <span id="google-button">Sign in with Google</span>
+                    </button>
+                </form>
+
+                <!-- Footer -->
+                <footer>
+                    © <time datetime="1984">1984</time> - <span id="current-year">current-year</span> FOOTBALLIA
+                </footer>
+            </section>
+        </div>
+    </div>
+    <div class="logged-page">
+        <div class="logged-page-container">
+            <h3 id="h3"></h3>
+            <button id="disconnect" class="logout"></button>
+        </div>
+    </div>
 </body>
+<script src="bundle.js"></script>
 
 </html>

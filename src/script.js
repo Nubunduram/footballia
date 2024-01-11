@@ -1,19 +1,47 @@
+// Import Firebase modules
+import { firebaseConfig } from './firebase';
+import { initializeApp } from 'firebase/app';
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signOut,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    updateProfile
+} from 'firebase/auth';
+import { getLanguage, setLanguage, updateText, langCode } from './translation.js';
+import errorMessages from './error.js';
+
+
 document.addEventListener("DOMContentLoaded", function () {
+
+     function loadingScreen() {
+        const loadingScreenElement = document.getElementById("loading-screen");
+        loadingScreenElement.style.display = "flex";
+        setTimeout(() => {
+            // Hide the loading screen after 3 seconds
+            loadingScreenElement.style.display = "none";
+        }, 1600);
+    }
+
+    loadingScreen();
+
+
+
     // Display the Actual Year in the footer onload
-    const currentYearElement = document.getElementById("current-year");
-    const currentYear = new Date().getFullYear();
-    currentYearElement.textContent = currentYear;
+    document.getElementById("current-year").textContent = new Date().getFullYear();
+
+    // TRANSLATION
 
     // Translation Menu Dropdown
     const languageMenu = document.getElementById("language-menu");
     const languageList = document.getElementById("language-list");
     const currentLanguageContainer = document.getElementById("current-language-container");
-
     // Toggle language list visibility on click
     currentLanguageContainer.addEventListener("click", function () {
         languageList.style.display = (languageList.style.display === "block") ? "none" : "block";
     });
-
     // Set the selected language on click and close the menu
     languageList.addEventListener("click", function (event) {
         if (event.target.tagName === "LI") {
@@ -23,165 +51,222 @@ document.addEventListener("DOMContentLoaded", function () {
             languageList.style.display = "none";
         }
     });
-
     // Close the menu when clicking anywhere else on the document
     document.addEventListener("click", function (e) {
         if (!languageMenu.contains(e.target) && !currentLanguageContainer.contains(e.target)) {
             languageList.style.display = "none";
         }
     });
-
-    // Translation
-    let language;
-
-    function getLanguage() {
-        const langCode = localStorage.getItem('language') || 'en';
-
-        return fetch(`Languages/${langCode}.json`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Language file not found or failed to load');
-                }
-                return response.json();
-            })
-            .then(lang => {
-                language = lang;
-                updateText();
-            })
-            .catch(error => console.error('Error fetching language:', error));
-    }
-
-    function setLanguage(lang) {
-        localStorage.setItem('language', lang);
-        getLanguage();
-    }
-
-    function updateText() {
-        const elementsToUpdate = ['li-eng', 'li-fr', 'h1', 'h2', 'name-label', 'email-label', 'password-label', 'agree',
-            'terms', 'and', 'policy', 'sign-in-button', 'sign-up-button', 'or-text', 'google-button'
-        ];
-
-        elementsToUpdate.forEach(function (elementId) {
-            const element = document.getElementById(elementId);
-            if (element.tagName === 'INPUT' && (element.type === 'button' || element.type === 'submit')) {
-                // For buttons, update the 'value' attribute
-                element.value = language[elementId];
-            } else {
-                // For other elements, update the text content
-                element.textContent = language[elementId];
-            }
-        });
-    }
-
     // Set the initial language in the HTML
-    const initialLanguage = localStorage.getItem('language') || 'en';
-    document.getElementById("current-language").textContent = (initialLanguage === 'fr') ? 'Français' : 'English';
-
-    // Add this function to set language from HTML buttons
+    document.getElementById("current-language").textContent = (langCode() === 'fr') ? 'Français' : 'English';
+    // Function to set language from HTML buttons
     window.setLanguage = function (lang) {
-        setLanguage(lang);
+        setLanguage(lang).then(() => updateText());
     };
-
     // Document ready
-    getLanguage();
-});
-// FIREBASE 
-
-import { initializeApp } from 'firebase/app';
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signOut,
-    signInWithEmailAndPassword
-} from 'firebase/auth';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyC-yV9fjSVKU-svWZbTv_GCgxta7qBBIrY",
-    authDomain: "footbalia.firebaseapp.com",
-    projectId: "footbalia",
-    storageBucket: "footbalia.appspot.com",
-    messagingSenderId: "401806992603",
-    appId: "1:401806992603:web:866e3fece5021a811618fe"
-};
-
-// init firebase app
-initializeApp(firebaseConfig);
+    getLanguage().then(() => updateText());
 
 
-// Auth
-const auth = getAuth(); // Ensure that auth is initialized
+    // FIREBASE
 
-const signUpForm = document.querySelector('.form');
-const signInForm = document.querySelector('.form');
-const signUpButton = document.getElementById('sign-up-button');
-const signInButton = document.getElementById('sign-in-button');
+    // Init firebase app
+    initializeApp(firebaseConfig);
 
-let isSignUpMode = true;
+    // Auth
+    const auth = getAuth();
 
-signUpButton.addEventListener('click', function (e) {
-    e.preventDefault();
+    auth.onAuthStateChanged((user) => {
+        loadingScreen();
+            if (user) {
+                showLoggedPage();
+            } else {
+                showConnexionPage();
+            }
+    });
 
-    if (isSignUpMode) {
-        // Handle sign-up logic
-        const email = signUpForm.querySelector('#email').value;
-        const password = signUpForm.querySelector('#password').value;
 
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((cred) => {
-                console.log("user created:", cred.user);
-                signUpForm.reset();
-            })
-            .catch((error) => {
-                console.error(error.message)
-            });
-    } else {
-        // Switch back to sign-up mode
-        isSignUpMode = true;
+    const form = document.querySelector('.form');
+    const signUpButton = document.getElementById('sign-up-button');
+    const signInButton = document.getElementById('sign-in-button');
 
-        // Reset the form to the sign-up version with all elements displayed
-        document.getElementById('name-label-input').style.display = 'flex';
-        document.getElementById('checkbox-container').style.display = 'flex';
+    let isSignUpMode = true;
 
-        // Handle any additional logic or UI updates needed for sign-up mode
+    signUpButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (isSignUpMode) {
+            handleSignUp();
+        } else {
+            // Switch back to sign-up mode
+            isSignUpMode = true;
+            showSignUpForm();
+        }
+    });
+
+    signInButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        if (isSignUpMode) {
+            // Switch to sign-in mode
+            isSignUpMode = false;
+            showSignInForm();
+        } else {
+            handleSignIn();
+        }
+    });
+
+    // Showing Pages
+    function showConnexionPage() {
+        // Show connexion page content, hide logged page content
+        document.querySelector('.connexion-page').style.display = 'block';
+        document.querySelector('.logged-page').style.display = 'none';
     }
-});
 
-signInButton.addEventListener('click', function (e) {
-    e.preventDefault();
+    function showLoggedPage() {
+        // Get the current user
+        const user = auth.currentUser;
 
-    if (isSignUpMode) {
-        // Switch to sign-in mode
-        isSignUpMode = false;
+        if (user) {
+            // Show logged page content, hide connexion page content
+            document.querySelector('.connexion-page').style.display = 'none';
+            document.querySelector('.logged-page').style.display = 'block';
+            const userName = user.displayName;
+            const welcomeMessage = document.getElementById('h3');
+            welcomeMessage.textContent = (langCode() === "en") ? `Welcome to Footballia, ${userName}` : `Bienvenue sur Footballia, ${userName}`;
+            const disconnectionButton = document.getElementById('disconnect');
+            disconnectionButton.textContent = (langCode() === "en") ? `Disconnection` : `Se deconnecter`;
 
-        // Hide the Name input and Terms/Privacy Policy section in sign-in mode
+        } else {
+            showConnexionPage()
+        }
+    }
+
+    // Hide/Show input to show the right Form
+    function showSignInForm() {
         document.getElementById('name-label-input').style.display = 'none';
         document.getElementById('checkbox-container').style.display = 'none';
+    }
 
-    } else {
-        // Handle sign-in logic
-        const email = signInForm.querySelector('#email').value;
-        const password = signInForm.querySelector('#password').value;
+    function showSignUpForm() {
+        document.getElementById('name-label-input').style.display = 'flex';
+        document.getElementById('checkbox-container').style.display = 'flex';
+    }
+
+    // Submit the form by pressing on Enter
+    form.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); 
+    
+            if (isSignUpMode) {
+                signUpButton.click();
+            } else {
+                signInButton.click();
+            }
+        }
+    });
+    
+    // Handling Form
+    
+    function validateSignUpInput(email, password, name, checkbox) {
+        const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const MIN_PASSWORD_LENGTH = 6;
+
+        const lang = langCode();
+
+        const showError = (message) => {
+            alert(message[lang]);
+        };
+    
+        const errorConditions = [
+            { shouldShowError: !checkbox.checked, message: errorMessages.agreement },
+            { shouldShowError: !name || name.trim() === "", message: errorMessages.name },
+            { shouldShowError: !email || !emailFormat.test(email), message: !email ? errorMessages.invalidEmail : errorMessages.invalidEmailFormat },
+            { shouldShowError: password.trim() === "", message: errorMessages.missingPassword },
+            { shouldShowError: password.length < MIN_PASSWORD_LENGTH, message: errorMessages.weakPassword },
+        ];
+    
+        for (const condition of errorConditions) {
+            if (condition.shouldShowError) {
+                showError(condition.message);
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    function signUpWithEmailAndPassword(email, password, name) {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(() => updateProfile(auth.currentUser, { displayName: name }))
+            .then(showLoggedPage)
+            .catch((error) => {
+                const errorCode = error.code;
+                switch (errorCode) {
+                    case 'auth/email-already-in-use':
+                        alert(errorMessages.emailInUse[langCode()]);
+                        break;
+                    default:
+                        alert(errorMessages.genericError[langCode()]);
+                }
+            });
+    }
+
+    function handleSignUp() {
+        const email = form.querySelector('#email').value;
+        const password = form.querySelector('#password').value;
+        const name = form.querySelector('#name').value;
+        const checkbox = form.querySelector('#checkbox');
+    
+        if (validateSignUpInput(email, password, name, checkbox)) {
+            signUpWithEmailAndPassword(email, password, name);
+        }
+    }
+    
+
+
+    function handleSignIn() {
+        const email = form.querySelector('#email').value;
+        const password = form.querySelector('#password').value;
 
         signInWithEmailAndPassword(auth, email, password)
-            .then((cred) => {
-                console.log('User Logged In:', cred.user)
+            .catch(() => {
+                const errorMessage = (langCode() === "en") ? "Email or password incorrect" : "L'email et/ou le mot de passe ne correspondent pas";
+                alert(errorMessage);
+            });
+    }
+
+    // Google Sign in
+
+    const provider = new GoogleAuthProvider();
+
+    const googleLoginButton = document.getElementById('google-login');
+
+    auth.languageCode = langCode();
+
+    googleLoginButton.addEventListener('click', function () {
+        signInWithGoogle();
+    });
+
+    function signInWithGoogle() {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                updateProfile(auth.currentUser, { mail: mail });
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const user = result.user;
             })
             .catch((error) => {
-                console.error(error.message)
-            })
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.error(`Google Sign-In Error: ${errorCode} - ${errorMessage}`);
+            });
     }
+
+    // Log Out
+    const logoutButton = document.getElementById('disconnect');
+
+    logoutButton.addEventListener('click', () => {
+        signOut(auth)
+    });
 });
 
 
-// Log Out
-
-// const logoutButton = document.querySelector('.logout');
-// logoutButton.addEventListener('click', () => {
-//     signOut(auth)
-//     .then(() => {
-//         console.log('User Signed Out')
-//     })
-//     .catch((error) => {
-//         console.error(error.message)
-//     })
-// }) 
