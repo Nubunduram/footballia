@@ -1,5 +1,5 @@
 &nbsp;
-# Sophie Bluel: Architect
+# Footballia Auth Page
 
 HTML/CSS/JS/Firebase
 
