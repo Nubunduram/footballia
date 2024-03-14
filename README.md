@@ -10,7 +10,7 @@ This project was a practice project for fun, i wanted to try using Firebase Auth
 
 ## Overview
 
-![screenshot](./Assets/footballia.png" "Footballia Desktop")
+![screenshot](../Assets/footballia.png" "Footballia Desktop")
 
 ## Assessed Skills
 
