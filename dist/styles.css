@@ -14,22 +14,18 @@
     --white: #fff;
     --gray: #9f9f9f;
     --black: #262626;
-    --color1: #FF0000; /* Rouge */
-    --color2: #FF7F00; /* Orange */
-    --color3: #FFFF00; /* Jaune */
-    --color4: #7FFF00; /* Vert clair */
-    --color5: #00FF00; /* Vert */
-    --color6: #00FF7F; /* Turquoise */
-    --color7: #00FFFF; /* Cyan */
-    --color8: #007FFF; /* Bleu clair */
-    --color9: #0000FF; /* Bleu */
-    --color10: #7F00FF; /* Violet */
 }
 
 button,
 input[type="button"],
 a {
     cursor: pointer;
+}
+
+#language-menu button, #language-list button {
+    background-color: var(--white);
+    color: var(--gray);
+    font-size: 1rem;
 }
 
 input:-webkit-autofill,
@@ -248,16 +244,15 @@ hr {
     list-style: none;
     background-color: var(--white);
     border: 1px solid var(--gray);
-    border-radius: 0.25rem;
     box-shadow: 0 1px 5px 1px var(--gray);
 }
 
-#language-list li {
+#language-list button {
     padding: 0.5rem;
     cursor: pointer;
 }
 
-#language-list li:hover {
+#language-list button:hover {
     opacity: 0.75;
 }
 
